@@ -6,14 +6,13 @@ use raytrace::hitable::Hitable;
 use raytrace::hitable_list::HitableList;
 use raytrace::sphere::Sphere;
 use raytrace::camera::Camera;
-
-extern crate rand;
-use rand::Rng;
+use raytrace::camera::drand48;
 
 fn color(r: Ray, world: &HitableList)-> Vec3{
-    match world.hit(r, 0.0, std::f32::MAX) {
+    match world.hit(r, 0.001, std::f32::MAX) {
         Some(rec) => {
-            return 0.5*Vec3::new(rec.normal.x()+1.0, rec.normal.y()+1.0, rec.normal.z()+1.0);
+            let target:Vec3 = rec.p + rec.normal + Camera::random_in_unit_sphere();
+            return 0.5*color(Ray::new(rec.p, target-rec.p), world);
         }
         None => {
             let unit_direction = Vec3::make_unit_vector(r.direction());
@@ -21,11 +20,6 @@ fn color(r: Ray, world: &HitableList)-> Vec3{
             return (1.0-t) * Vec3::new(1.0, 1.0, 1.0) + t*Vec3::new(0.5, 0.7, 1.0);
         }
     }
-}
-
-fn drand48()->f32{
-    let random_float: f32 = rand::thread_rng().gen();
-    random_float
 }
 
 fn main() {
@@ -51,6 +45,7 @@ fn main() {
                 col += color(r, &world);
             }
             col /= ns as f32;
+            col = Vec3::new(f32::sqrt(col[0]), f32::sqrt(col[1]), f32::sqrt(col[2]));
             let ir = (255.99 * col[0]) as i32;
             let ig = (255.99 * col[1]) as i32;
             let ib = (255.99 * col[2]) as i32;
