@@ -36,10 +36,16 @@ fn main() {
     let ns = 50;
     print!("P3\n{} {}\n255\n", nx, ny);
 
-    let cam = Camera::new(Vec3::new(0.0, 0.0, 0.0));
+    let cam = Camera::new(
+        Vec3::new(-2.0, 2.0, 1.0),
+        Vec3::new(0.0, 0.0, -1.0),
+        Vec3::new(0.0, 1.0, 0.0),
+        20.0,
+        nx as f32/ny as f32
+    );
 
     let mut world = HitableList::new(2);
-    world.add(Box::new(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5, Box::new(Lambertian::new(Vec3::new(0.8, 0.3, 0.3))))));
+    world.add(Box::new(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5, Box::new(Lambertian::new(Vec3::new(0.2, 0.2, 0.8))))));
     world.add(Box::new(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0, Box::new(Lambertian::new(Vec3::new(0.8, 0.8, 0.0))))));
     world.add(Box::new(Sphere::new(Vec3::new(1.0, 0.0, -1.0), 0.5, Box::new(Metal::new(Vec3::new(0.8, 0.6, 0.2), 0.1)))));
     world.add(Box::new(Sphere::new(Vec3::new(-1.0, 0.0, -1.0), 0.5, Box::new(Dielectric::new(1.5)))));
