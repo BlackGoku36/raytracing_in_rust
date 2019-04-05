@@ -36,12 +36,19 @@ fn main() {
     let ns = 50;
     print!("P3\n{} {}\n255\n", nx, ny);
 
+    let look_from:Vec3 = Vec3::new(3.0, 3.0, 2.0);
+    let look_at:Vec3 = Vec3::new(0.0, 0.0, -1.0);
+    let dist_to_focus = (look_from-look_at).length();
+    let aperature:f32 = 2.0;
+
     let cam = Camera::new(
-        Vec3::new(-2.0, 2.0, 1.0),
-        Vec3::new(0.0, 0.0, -1.0),
+        look_from,
+        look_at,
         Vec3::new(0.0, 1.0, 0.0),
         20.0,
-        nx as f32/ny as f32
+        nx as f32/ny as f32,
+        aperature,
+        dist_to_focus
     );
 
     let mut world = HitableList::new(2);

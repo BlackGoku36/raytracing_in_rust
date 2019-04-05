@@ -21,7 +21,7 @@ impl Lambertian{
 
 impl Material for Lambertian{
     fn scatter(&self, _r_in: &Ray, rec: &HitRecord, attenuation: &mut Vec3, scattered: &mut Ray)-> bool{
-        let target:Vec3 = rec.p + rec.normal + Camera::random_in_unit_sphere();
+        let target:Vec3 = rec.p + rec.normal + random_in_unit_sphere();
         *scattered = Ray::new(rec.p, target-rec.p);
         *attenuation = self.albedo;
         true
@@ -45,7 +45,7 @@ impl Metal{
 impl Material for Metal{
     fn scatter(&self, r_in: &Ray, rec: &HitRecord, attenuation: &mut Vec3, scattered: &mut Ray)-> bool{
         let reflected:Vec3 = reflect(Vec3::make_unit_vector(r_in.direction()), rec.normal);
-        *scattered = Ray::new(rec.p, reflected+self.roughness*Camera::random_in_unit_sphere());
+        *scattered = Ray::new(rec.p, reflected+self.roughness*random_in_unit_sphere());
         *attenuation = self.albedo;
         Vec3::dot(&scattered.direction(), &rec.normal) > 0.0
     }
@@ -122,4 +122,12 @@ pub fn refract(v: Vec3, n: Vec3, ni_over_nt: f32, refracted: &mut Vec3)->bool{
     }else{
         false
     }
+}
+pub fn random_in_unit_sphere()-> Vec3{
+    let mut p:Vec3;
+    while{
+        p = 2.0*Vec3::new(drand48(), drand48(), drand48())-Vec3::new(1.0, 1.0, 1.0);
+        p.squared_length() >= 1.0
+    }{}
+    return p;
 }
