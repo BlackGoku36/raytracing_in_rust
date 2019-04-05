@@ -1,19 +1,12 @@
 use super::vec::Vec3;
 use super::ray::Ray;
+use super::material::Material;
 
 pub struct HitRecord{
     pub t: f32,
     pub p: Vec3,
-    pub normal: Vec3
-}
-impl HitRecord{
-    pub fn new()->Self{
-        HitRecord{
-            t: 0.0, 
-            p: Vec3::new(0.0, 0.0, 0.0), 
-            normal: Vec3::new(0.0, 0.0, 0.0)
-        }
-    }
+    pub normal: Vec3,
+    pub material: Box<Material>
 }
 
 pub trait Hitable{

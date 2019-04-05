@@ -7,12 +7,19 @@ use raytrace::hitable_list::HitableList;
 use raytrace::sphere::Sphere;
 use raytrace::camera::Camera;
 use raytrace::camera::drand48;
+use raytrace::material::Lambertian;
+use raytrace::material::Metal;
 
-fn color(r: Ray, world: &HitableList)-> Vec3{
+fn color(r: Ray, world: &HitableList, depth: i32)-> Vec3{
     match world.hit(r, 0.001, std::f32::MAX) {
         Some(rec) => {
-            let target:Vec3 = rec.p + rec.normal + Camera::random_in_unit_sphere();
-            return 0.5*color(Ray::new(rec.p, target-rec.p), world);
+            let mut scattered: Ray = Ray::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 0.0, 0.0));
+            let mut attenuation:Vec3 = Vec3::new(0.0, 0.0, 0.0);
+            if depth<50 && rec.material.scatter(&r, &rec, &mut attenuation, &mut scattered){
+                attenuation*color(scattered, world, depth+1)
+            }else{
+                Vec3::new(0.0, 0.0, 0.0)
+            }
         }
         None => {
             let unit_direction = Vec3::make_unit_vector(r.direction());
@@ -31,10 +38,10 @@ fn main() {
     let cam = Camera::new(Vec3::new(0.0, 0.0, 0.0));
 
     let mut world = HitableList::new(2);
-
-    world.add(Box::new(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5)));
-    world.add(Box::new(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0)));
-
+    world.add(Box::new(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5, Box::new(Lambertian::new(Vec3::new(0.8, 0.3, 0.3))))));
+    world.add(Box::new(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0, Box::new(Lambertian::new(Vec3::new(0.8, 0.8, 0.0))))));
+    world.add(Box::new(Sphere::new(Vec3::new(1.0, 0.0, -1.0), 0.5, Box::new(Metal::new(Vec3::new(0.8, 0.6, 0.2), 0.1)))));
+    world.add(Box::new(Sphere::new(Vec3::new(-1.0, 0.0, -1.0), 0.5, Box::new(Metal::new(Vec3::new(0.8, 0.8, 0.8), 0.9)))));
     for j in (0..ny).rev() {
         for i in 0..nx {
             let mut col = Vec3::new(0.0, 0.0, 0.0);
@@ -42,7 +49,7 @@ fn main() {
                 let u = (i as f32 + drand48()) / nx as f32;
                 let v = (j as f32 + drand48()) / ny as f32;
                 let r = cam.get_ray(u, v);
-                col += color(r, &world);
+                col += color(r, &world, 0);
             }
             col /= ns as f32;
             col = Vec3::new(f32::sqrt(col[0]), f32::sqrt(col[1]), f32::sqrt(col[2]));
