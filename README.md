@@ -7,5 +7,5 @@ Commits are done chapter by chapter
 
 Run it with `cargo run --release > output.ppm` command and .ppm image will be generated.
 
-Final output(Took ~14 mins to render):
-#[](render.png)
+Final output(Width = 1200, Height = 800, Sampling = 10)(Took ~14 mins to render):
+![](render.png)
