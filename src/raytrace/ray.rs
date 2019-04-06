@@ -4,13 +4,15 @@ use super::vec::Vec3;
 pub struct Ray {
     origin: Vec3,
     direction: Vec3,
+    time: f32
 }
 
 impl Ray{
-    pub fn new(origin: Vec3, direction:Vec3) -> Self {
+    pub fn new(origin: Vec3, direction:Vec3, ti: f32) -> Self {
         Ray{
             origin, 
-            direction
+            direction,
+            time: ti,
         }
     }
 
@@ -20,6 +22,10 @@ impl Ray{
 
     pub fn direction(&self) -> Vec3 {
         self.direction
+    }
+
+    pub fn time(&self) -> f32 {
+        self.time
     }
 
     pub fn point_at_parameter(&self, t: f32) -> Vec3 {

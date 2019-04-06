@@ -1,6 +1,8 @@
 use super::vec::Vec3;
 use super::vec::random_in_unit_sphere;
+use super::vec::drand48;
 use super::ray::Ray;
+use std::f32::consts::PI;
 
 pub struct Camera{
     origin: Vec3,
@@ -10,12 +12,17 @@ pub struct Camera{
     u: Vec3,
     v: Vec3,
     w: Vec3,
-    lens_radius:f32
+    time0: f32,
+    time1: f32,
+    lens_radius:f32,
 }
 impl Camera{
-    pub fn new(look_from: Vec3, look_at:Vec3, vup: Vec3, vfov: f32, aspect:f32, aperture: f32, focus_dist: f32)-> Self{
+    pub fn new(look_from: Vec3, look_at:Vec3, vup: Vec3, vfov: f32, aspect:f32, 
+    aperture: f32, focus_dist: f32, t0: f32, t1: f32) -> Self {
+        let time0 = t0;
+        let time1 = t1;
         let lens_radius = aperture / 2.0;
-        let theta = vfov*std::f32::consts::PI / 180.0;
+        let theta = vfov*PI / 180.0;
         let half_height = f32::tan(theta / 2.0);
         let half_width = aspect * half_height;
         let origin = look_from;
@@ -35,13 +42,16 @@ impl Camera{
             u,
             v,
             w,
+            time0,
+            time1,
             lens_radius
         }
     }
 
     pub fn get_ray(&self, u: f32, v:f32)-> Ray{
-        let rd:Vec3 = self.lens_radius * random_in_unit_sphere();
+        let rd: Vec3 = self.lens_radius * random_in_unit_sphere();
         let offset = self.u * rd.x() + self.v * rd.y();
-        Ray::new(self.origin + offset, self.lower_left_corner + u*self.horizontal + v*self.vertical - self.origin - offset)
+        let time: f32 = self.time0 + drand48()*(self.time1 - self.time0);
+        Ray::new(self.origin + offset, self.lower_left_corner + u*self.horizontal + v*self.vertical - self.origin - offset, time)
     }
 }

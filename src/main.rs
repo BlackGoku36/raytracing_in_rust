@@ -3,6 +3,7 @@ pub mod raytrace;
 use raytrace::vec::Vec3;
 use raytrace::ray::Ray;
 use raytrace::sphere::Sphere;
+use raytrace::moving_sphere::Movingsphere;
 
 use raytrace::hitable::Hitable;
 use raytrace::hitable_list::HitableList;
@@ -16,7 +17,7 @@ use raytrace::material::Dielectric;
 fn color(r: Ray, world: &HitableList, depth: i32) -> Vec3{
     match world.hit(r, 0.001, std::f32::MAX) {
         Some(rec) => {
-            let mut scattered: Ray = Ray::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 0.0, 0.0));
+            let mut scattered: Ray = Ray::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 0.0, 0.0), 0.0);
             let mut attenuation:Vec3 = Vec3::new(0.0, 0.0, 0.0);
             if depth < 50 && rec.material.scatter(&r, &rec, &mut attenuation, &mut scattered){
                 attenuation * color(scattered, world, depth + 1)
@@ -49,8 +50,9 @@ fn random_scene() -> HitableList {
             if (center-Vec3::new(4.0, 0.2, 0.0)).length()>0.9{
                 if choose_mat < 0.8 {
                     world.add(
-                        Box::new(Sphere::new(center,
-                        0.2, 
+                        Box::new(Movingsphere::new(center,
+                        center + Vec3::new(0.0, 0.5*drand48(), 0.0),
+                        0.0, 1.0, 0.2,
                         Box::new(Lambertian::new(Vec3::new(drand48()*drand48(), drand48()*drand48(), drand48()*drand48())))))
                     );
 
@@ -125,13 +127,13 @@ fn default_scene() -> HitableList {
 fn main() {
     let nx = 200;
     let ny = 100;
-    let ns = 10;
+    let ns = 100;
     print!("P3\n{} {}\n255\n", nx, ny);
 
     let look_from:Vec3 = Vec3::new(13.0, 2.0, 3.0);
     let look_at:Vec3 = Vec3::new(0.0, 0.0, 0.0);
     let dist_to_focus = 10.0;
-    let aperature:f32 = 0.1;
+    let aperature:f32 = 0.0;
 
     let cam = Camera::new(
         look_from,
@@ -140,7 +142,9 @@ fn main() {
         20.0,
         nx as f32/ny as f32,
         aperature,
-        dist_to_focus
+        dist_to_focus,
+        0.0, 
+        1.0,
     );
 
     let world = random_scene();

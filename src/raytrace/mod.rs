@@ -5,3 +5,4 @@ pub mod hitable;
 pub mod hitable_list;
 pub mod camera;
 pub mod material;
+pub mod moving_sphere;
