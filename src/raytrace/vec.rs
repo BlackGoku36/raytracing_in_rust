@@ -1,3 +1,6 @@
+extern crate rand;
+use rand::Rng;
+
 #[derive(Copy, Clone, Debug)]
 pub struct Vec3{
     e: [f32; 3],
@@ -31,6 +34,7 @@ impl Vec3{
     pub fn make_unit_vector(v : Vec3)->Vec3{
         v / v.length()
     }
+
     pub fn cross(v1 : Vec3, v2 : Vec3) -> Vec3 {
         Vec3::new(
             v1.e[1] * v2.e[2] - v1.e[2] * v2.e[1],
@@ -221,3 +225,16 @@ impl std::ops::DivAssign<f32> for Vec3 {
     }
 }
 
+pub fn drand48()->f32{
+    let random_float: f32 = rand::thread_rng().gen();
+    random_float
+}
+
+pub fn random_in_unit_sphere()-> Vec3{
+    let mut p:Vec3;
+    while{
+        p = 2.0 * Vec3::new(drand48(), drand48(), drand48()) - Vec3::new(1.0, 1.0, 1.0);
+        p.squared_length() >= 1.0
+    }{}
+    return p;
+}
