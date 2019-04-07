@@ -1,9 +1,10 @@
 use super::ray::Ray;
 use super::hitable::Hitable;
 use super::hitable::HitRecord;
+use super::aabb::AABB;
 
 pub struct HitableList{
-    spheres: Vec<Box<Hitable>>
+    pub spheres: Vec<Box<dyn Hitable>>
 }
 
 impl HitableList{
@@ -32,5 +33,16 @@ impl Hitable for HitableList{
             }
         }
         hit_anything
+    }
+    fn bounding_box(&self) -> Option<AABB> {
+        if self.spheres.len() < 1 {
+            return None;
+        }
+        let mut first_true = self.spheres[0].bounding_box()?;
+        for i in 1..self.spheres.len() {
+            let tmp_box = self.spheres[i].bounding_box()?;
+            first_true = AABB::surrounding_box(&first_true, &tmp_box);
+        }
+        Some(first_true)
     }
 }

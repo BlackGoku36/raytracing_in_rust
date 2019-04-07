@@ -48,6 +48,13 @@ impl Vec3{
         v1.e[1] * v2.e[1] +
         v1.e[2] * v2.e[2]
     }
+    pub fn inverse(&self)->Vec3{
+        Vec3::new(
+            1.0 / self.x(), 
+            1.0 / self.y(), 
+            1.0 / self.z()
+        )
+    }
 }
 
 impl std::ops::Index<usize> for Vec3 {

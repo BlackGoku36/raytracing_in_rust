@@ -2,9 +2,9 @@ use super::vec::Vec3;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Ray {
-    origin: Vec3,
-    direction: Vec3,
-    time: f32
+    pub origin: Vec3,
+    pub direction: Vec3,
+    pub time: f32
 }
 
 impl Ray{

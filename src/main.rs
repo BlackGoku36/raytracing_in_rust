@@ -50,9 +50,8 @@ fn random_scene() -> HitableList {
             if (center-Vec3::new(4.0, 0.2, 0.0)).length()>0.9{
                 if choose_mat < 0.8 {
                     world.add(
-                        Box::new(Movingsphere::new(center,
-                        center + Vec3::new(0.0, 0.5*drand48(), 0.0),
-                        0.0, 1.0, 0.2,
+                        Box::new(Sphere::new(center, 
+                        0.2,
                         Box::new(Lambertian::new(Vec3::new(drand48()*drand48(), drand48()*drand48(), drand48()*drand48())))))
                     );
 
@@ -125,9 +124,9 @@ fn default_scene() -> HitableList {
 //-------
 
 fn main() {
-    let nx = 200;
-    let ny = 100;
-    let ns = 100;
+    let nx = 400;
+    let ny = 300;
+    let ns = 10;
     print!("P3\n{} {}\n255\n", nx, ny);
 
     let look_from:Vec3 = Vec3::new(13.0, 2.0, 3.0);

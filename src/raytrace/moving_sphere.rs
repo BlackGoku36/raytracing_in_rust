@@ -3,6 +3,7 @@ use super::ray::Ray;
 use super::hitable::Hitable;
 use super::hitable::HitRecord;
 use super::material::Material;
+use super::aabb::AABB;
 
 pub struct Movingsphere{
     pub center0: Vec3,
@@ -54,5 +55,14 @@ impl Hitable for Movingsphere{
             }
         }
         None
+    }
+    fn bounding_box(&self)->Option<AABB>{
+        let box0 = AABB::new(self.center(self.t0)-Vec3::new(self.radius, self.radius, self.radius), self.center(self.t0)+Vec3::new(self.radius, self.radius, self.radius));
+        let box1 = AABB::new(self.center(self.t1)-Vec3::new(self.radius, self.radius, self.radius), self.center(self.t1)+Vec3::new(self.radius, self.radius, self.radius));
+        let sbox = AABB::surrounding_box(&box0, &box1);
+        Some(AABB{
+            min: sbox.min,
+            max: sbox.max
+        })
     }
 }

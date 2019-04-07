@@ -9,5 +9,5 @@ Renders according to RTIW's chapter in [RTIW Chapter Renders](RTIWChapterRenders
 
 Run it with `cargo run --release > output.ppm` command and .ppm image will be generated.
 
-RTIW's Final output(Width = 1200, Height = 800, Sampling = 10)(Took ~14 mins to render):
+RTIW's Final output(Width = 1200, Height = 800, Sampling = 10)(Took ~3.5 mins to render using above command):
 ![](Final.png)
