@@ -81,7 +81,7 @@ impl Material for Dielectric {
         let mut refracted:Vec3 = Vec3::new(0.0, 0.0, 0.0);
         let reflect_prob:f32;
         let mut cosine:f32;
-        let mut scattered: Ray;
+        let scattered: Ray;
 
         if Vec3::dot(&r_in.direction(), &rec.normal) > 0.0 {
             outward_normal = -rec.normal;

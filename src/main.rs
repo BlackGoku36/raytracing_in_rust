@@ -1,23 +1,22 @@
 pub mod raytrace;
+pub mod scenes;
 
 use raytrace::vec::Vec3;
 use raytrace::ray::Ray;
-use raytrace::sphere::Sphere;
-use raytrace::moving_sphere::Movingsphere;
 
 use raytrace::hitable::Hitable;
 use raytrace::hitable_list::HitableList;
 use raytrace::camera::Camera;
 use raytrace::vec::drand48;
 
-use raytrace::material::Lambertian;
-use raytrace::material::Metal;
-use raytrace::material::Dielectric;
-
-use raytrace::texture::CheckerTexture;
-use raytrace::texture::ConstantTexture;
-
-use std::sync::Arc;
+use scenes::{
+    checkered_texture::checkered_texture_scene,
+    default_scene::default_scene,
+    random_spheres::{
+        random_scene, 
+        moving_random_scene
+    },
+};
 
 fn color(r: Ray, world: &HitableList, depth: i32) -> Vec3{
     match world.hit(r, 0.001, std::f32::MAX) {
@@ -39,126 +38,11 @@ fn color(r: Ray, world: &HitableList, depth: i32) -> Vec3{
     }
 }
 
-//------- Random Scene --------
-fn random_scene() -> HitableList {
-    let n = 500;
-    let mut world = HitableList::new(n + 1);
-    let checker = CheckerTexture::new(
-        Box::new(ConstantTexture::new(Vec3::new(0.2, 0.3, 0.1))), 
-        Box::new(ConstantTexture::new(Vec3::new(0.9, 0.9, 0.9))));
-    world.add(
-        Box::new(Sphere::new(Vec3::new(0.0, -1000.0, 0.0), 
-        1000.0, 
-        Arc::new(Lambertian::new(checker))))
-    );
-    
-    for a in -11..11 {
-        for b in -11..11 {
-            let choose_mat = drand48();
-            let center = Vec3::new(a as f32 + 0.9 * drand48(), 0.2, b as f32 + 0.9 * drand48());
-            if (center-Vec3::new(4.0, 0.2, 0.0)).length()>0.9{
-                if choose_mat < 0.8 {
-                    world.add(
-                        Box::new(Sphere::new(center, 
-                        0.2,
-                        Arc::new(Lambertian::new(Box::new(ConstantTexture::new(Vec3::new(drand48()*drand48(), drand48()*drand48(), drand48()*drand48())))))))
-                    );
-
-                } else if choose_mat < 0.95 {
-                    world.add(
-                        Box::new(Sphere::new(center, 
-                        0.2, 
-                        Arc::new(Metal::new(Vec3::new(0.5 * (1.0 + drand48()), 0.5 * ( 1.0 + drand48()), 0.5 * (1.0 + drand48())), 0.5 * ( 1.0 + drand48())))))
-                    );
-
-                } else {
-                    world.add(
-                        Box::new(Sphere::new(center, 
-                        0.2, 
-                        Arc::new(Dielectric::new(1.5))))
-                    );
-                }
-            }
-        }
-    }
-    world.add(
-        Box::new(Sphere::new(Vec3::new(0.0, 1.0, 0.0), 
-        1.0, 
-        Arc::new(Dielectric::new(1.5))))
-    );
-    world.add(
-        Box::new(Sphere::new(Vec3::new(-4.0, 1.0, 0.0), 
-        1.0, 
-        Arc::new(Lambertian::new(Box::new(ConstantTexture::new(Vec3::new(0.4, 0.2, 0.1)))))))
-    );
-    world.add(
-        Box::new(Sphere::new(Vec3::new(4.0, 1.0, 0.0), 
-        1.0, 
-        Arc::new(Metal::new(Vec3::new(0.7, 0.6, 0.5), 0.0))))
-    );
-    
-    world
-}
-//--------
-
-//------ Default Scene with 4 Sphere ------
-//fn default_scene() -> HitableList {
-//     let mut world = HitableList::new(4);
-//     world.add(
-//         Box::new(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 
-//         0.5, 
-//         Box::new(Lambertian::new(Vec3::new(0.2, 0.2, 0.8)))))
-//     );
-//     world.add(
-//         Box::new(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 
-//         100.0, Box::new(Lambertian::new(Vec3::new(0.8, 0.8, 0.0)))))
-//     );
-//     world.add(
-//         Box::new(Sphere::new(Vec3::new(1.0, 0.0, -1.0), 
-//         0.5, 
-//         Box::new(Metal::new(Vec3::new(0.8, 0.6, 0.2), 0.1))))
-//     );
-//     world.add(
-//         Box::new(Sphere::new(Vec3::new(-1.0, 0.0, -1.0), 
-//         0.5, 
-//         Box::new(Dielectric::new(1.5))))
-//     );
-//     world.add(
-//         Box::new(Sphere::new(Vec3::new(-1.0, 0.0, -1.0), 
-//         -0.45, Box::new(Dielectric::new(1.5))))
-//     );
-
-//     world
-// }
-//-------
-
-//---2 Spheres Checkered Texture scene-----
-fn checkered_texture_scene()-> HitableList{
-    let mut world = HitableList::new(2);
-    world.add(
-        Box::new(Sphere::new(Vec3::new(0.0, -10.0, 0.0), 
-        10.0, 
-        Arc::new(Lambertian::new(CheckerTexture::new(
-        Box::new(ConstantTexture::new(Vec3::new(0.2, 0.3, 0.1))), 
-        Box::new(ConstantTexture::new(Vec3::new(0.9, 0.9, 0.9)))
-    )))))
-    );
-    world.add(
-        Box::new(Sphere::new(Vec3::new(0.0, 10.0, 0.0), 
-        10.0, 
-        Arc::new(Lambertian::new(CheckerTexture::new(
-        Box::new(ConstantTexture::new(Vec3::new(0.2, 0.3, 0.1))), 
-        Box::new(ConstantTexture::new(Vec3::new(0.9, 0.9, 0.9)))
-    )))))
-    );
-    world
-}
-//-------
 
 fn main() {
-    let nx = 200*3;
-    let ny = 100*3;
-    let ns = 10*3;
+    let nx = 200*1;
+    let ny = 100*1;
+    let ns = 10*1;
     print!("P3\n{} {}\n255\n", nx, ny);
 
     let look_from:Vec3 = Vec3::new(13.0, 2.0, 3.0);
