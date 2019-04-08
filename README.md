@@ -7,7 +7,7 @@ Commits are done chapter by chapter
 
 Renders according to RTIW's chapter in [RTIW Chapter Renders](RTIWChapterRenders), RTTNW's chapter in [RTTNW Chapter Renders](RTNWChapterRenders),
 
-Run it with `cargo run --release > output.ppm` command and .ppm image will be generated.
+If you are using VSCode than run `Render` task by pressing `F1 - Tasks: Run Task - Render` else run it with `cargo run --release > output.ppm` command and .ppm image will be generated.
 
 RTIW's Final output(Width = 1200, Height = 800, Sampling = 10)(Took ~3.5 mins to render using above command):
 ![](Final.png)

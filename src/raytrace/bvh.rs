@@ -3,46 +3,54 @@ use super::ray::Ray;
 use super::hitable::Hitable;
 use super::aabb::AABB;
 use super::hitable::HitRecord;
-use super::hitable_list::HitableList;
 
 use rand::Rng;
 
 pub struct BVHNode {
-    left: Box<dyn Hitable>,
-    right: Box<dyn Hitable>,
+    left: Box<Hitable>,
+    right: Box<Hitable>,
     bbox: AABB,
 }
 
 impl BVHNode {
-    pub fn new(hitable_list: HitableList) -> Box<dyn Hitable> {
-        Self::construct(hitable_list.spheres)
+    pub fn new(bbox: AABB, left: Box<Hitable>, right: Box<Hitable>) -> Self {
+        BVHNode{
+            left,
+            right,
+            bbox
+        }
     }
-    fn construct(mut hitable_list: Vec<Box<dyn Hitable>>) -> Box<dyn Hitable> {
+    fn construct(mut hitable_list: Vec<Box<Hitable>>, t0: f32, t1: f32) -> Box<Hitable> {
+        let axis = rand::thread_rng().gen_range(0, 3);
+        hitable_list.sort_by(|a, b| {
+            let left_hit = a.required_bounding_box(0.0, 0.0).min;
+            let right_hit = b.required_bounding_box(0.0, 0.0).min;
+
+            left_hit[axis].partial_cmp(&right_hit[axis]).unwrap()
+        });
         match hitable_list.len() {
             0 => panic!("length mismatch"),
             1 => hitable_list.remove(0),
+            2 => {
+                let right = hitable_list.remove(1);
+                let left = hitable_list.remove(0);
+                let bbox = left.required_bounding_box(t0, t1).surrounding_box(&right.required_bounding_box(t0, t1));
+                Box::new(BVHNode::new(bbox, left, right))
+            }
             _ => {
-                let axis = rand::thread_rng().gen_range(0, 3);
-                hitable_list.sort_by(|a, b| {
-                    a.bounding_box().unwrap().min[axis].partial_cmp(&b.bounding_box().unwrap().min[axis]).unwrap()
-                });
                 let mut a = hitable_list;
                 let b = a.split_off(a.len() / 2);
-                let left = Self::construct(a);
-                let right = Self::construct(b);
-                let bbox = AABB::surrounding_box(&left.bounding_box().unwrap(),&right.bounding_box().unwrap());
-                Box::new(Self {
-                    left,
-                    right,
-                    bbox,
-                })
+                let left = Self::construct(b, t0, t1);
+                let right = Self::construct(a, t0, t1);
+                let bbox = left.required_bounding_box(t0, t1).surrounding_box(&right.required_bounding_box(t0, t1));
+                Box::new(BVHNode::new(bbox, left, right))
             }
         }
     }
 }
 
 impl Hitable for BVHNode {
-    fn bounding_box(&self) -> Option<AABB> {
+    fn bounding_box(&self, _t0: f32, _t1:f32) -> Option<AABB> {
         Some(self.bbox)
     }
 

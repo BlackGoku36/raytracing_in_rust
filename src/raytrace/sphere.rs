@@ -4,15 +4,16 @@ use super::hitable::Hitable;
 use super::hitable::HitRecord;
 use super::material::Material;
 use super::aabb::AABB;
+use std::sync::Arc;
 
 pub struct Sphere{
     pub center: Vec3,
     pub radius: f32,
-    pub material: Box<Material>
+    pub material: Arc<Material>
 }
 
 impl Sphere{
-    pub fn new(center: Vec3, radius: f32, material: Box<Material>) -> Self {
+    pub fn new(center: Vec3, radius: f32, material: Arc<Material>) -> Self {
         Sphere{
             center, 
             radius, 
@@ -34,7 +35,7 @@ impl Hitable for Sphere{
                 let t = temp;
                 let p = r.point_at_parameter(t);
                 let normal = (p - self.center) / self.radius;
-                return Some(HitRecord{t, p, normal, material: self.material.clone()});
+                return Some(HitRecord::new(t, p, normal, self.material.clone()));
 
             }
             let temp = (-b + f32::sqrt(discriminant)) / a;
@@ -48,7 +49,7 @@ impl Hitable for Sphere{
         }
         None
     }
-    fn bounding_box(&self)->Option<AABB>{
+    fn bounding_box(&self, _t0: f32, _t1: f32)->Option<AABB>{
         Some(AABB {
             min: self.center - Vec3::new(self.radius, self.radius, self.radius),
             max: self.center + Vec3::new(self.radius, self.radius, self.radius),

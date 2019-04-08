@@ -2,15 +2,28 @@ use super::vec::Vec3;
 use super::ray::Ray;
 use super::material::Material;
 use super::aabb::AABB;
+use std::sync::Arc;
 
 pub struct HitRecord{
     pub t: f32,
     pub p: Vec3,
     pub normal: Vec3,
-    pub material: Box<Material>
+    pub material: Arc<Material>
+}
+impl HitRecord{
+    pub fn new(t: f32, p: Vec3, normal: Vec3, material: Arc<Material>)-> Self{
+        HitRecord{
+            t, p,
+            normal,
+            material: material.clone()
+        }
+    }
 }
 
-pub trait Hitable{
+pub trait Hitable: Sync + Send{
     fn hit(&self, r: Ray, t_min:f32, t_max:f32) -> Option<HitRecord>;
-    fn bounding_box(&self)-> Option<AABB>;
+    fn bounding_box(&self, t0:f32, t1:f32)-> Option<AABB>;
+    fn required_bounding_box(&self, t0: f32, t1: f32)-> AABB {
+        self.bounding_box(t0, t1).expect("No Bounding Box Found")
+    }
 }

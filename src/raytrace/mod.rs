@@ -8,3 +8,4 @@ pub mod material;
 pub mod moving_sphere;
 pub mod aabb;
 pub mod bvh;
+pub mod texture;

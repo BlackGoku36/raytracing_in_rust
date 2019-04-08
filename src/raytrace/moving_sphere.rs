@@ -4,6 +4,7 @@ use super::hitable::Hitable;
 use super::hitable::HitRecord;
 use super::material::Material;
 use super::aabb::AABB;
+use std::sync::Arc;
 
 pub struct Movingsphere{
     pub center0: Vec3,
@@ -11,11 +12,11 @@ pub struct Movingsphere{
     pub t0: f32,
     pub t1:f32,
     pub radius: f32,
-    pub material: Box<Material>
+    pub material: Arc<Material>
 }
 
 impl Movingsphere{
-    pub fn new(center0: Vec3, center1: Vec3, t0: f32, t1: f32, radius: f32, material: Box<Material>) -> Self {
+    pub fn new(center0: Vec3, center1: Vec3, t0: f32, t1: f32, radius: f32, material: Arc<Material>) -> Self {
         Movingsphere{
             center0,
             center1,
@@ -56,7 +57,7 @@ impl Hitable for Movingsphere{
         }
         None
     }
-    fn bounding_box(&self)->Option<AABB>{
+    fn bounding_box(&self, _t0: f32, _t1: f32)->Option<AABB>{
         let box0 = AABB::new(self.center(self.t0)-Vec3::new(self.radius, self.radius, self.radius), self.center(self.t0)+Vec3::new(self.radius, self.radius, self.radius));
         let box1 = AABB::new(self.center(self.t1)-Vec3::new(self.radius, self.radius, self.radius), self.center(self.t1)+Vec3::new(self.radius, self.radius, self.radius));
         let sbox = AABB::surrounding_box(&box0, &box1);

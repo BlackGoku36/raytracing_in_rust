@@ -2,35 +2,34 @@ use super::vec::Vec3;
 use super::vec::drand48;
 use super::vec::random_in_unit_sphere;
 use super::ray::Ray;
+use super::texture::Texture;
+
 
 use super::hitable::HitRecord;
 
-pub trait Material {
-    fn scatter(&self, r_in: &Ray, rec: &HitRecord, attenuation: &mut Vec3, scattered: &mut Ray) -> bool;
-    fn clone(&self) -> Box<Material>;
+pub trait Material: Sync + Send{
+    fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Ray, Vec3)>;
 }
 
 pub struct Lambertian {
-    albedo: Vec3
+    pub albedo: Box<Texture>
 }
 
 impl Lambertian {
-    pub fn new(albedo: Vec3) -> Self{
+    pub fn new(albedo: Box<Texture> ) -> Self{
         Lambertian{ 
             albedo 
         }
     }
+
 }
 
 impl Material for Lambertian {
-    fn scatter(&self, r_in: &Ray, rec: &HitRecord, attenuation: &mut Vec3, scattered: &mut Ray) -> bool{
+    fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Ray, Vec3)>{
         let target:Vec3 = rec.p + rec.normal + random_in_unit_sphere();
-        *scattered = Ray::new(rec.p, target - rec.p, r_in.time());
-        *attenuation = self.albedo;
-        true
-    }
-    fn clone(&self) -> Box<Material>{
-        Box::new(Lambertian::new(self.albedo))
+        let scattered = Ray::new(rec.p, target - rec.p, r_in.time());
+        let attenuation = self.albedo.value(0.0, 0.0, rec.p);
+        Some((scattered, attenuation))
     }
 }
 
@@ -49,14 +48,15 @@ impl Metal {
 }
 
 impl Material for Metal{
-    fn scatter(&self, r_in: &Ray, rec: &HitRecord, attenuation: &mut Vec3, scattered: &mut Ray) -> bool {
+    fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Ray, Vec3)>{
         let reflected:Vec3 = reflect(Vec3::make_unit_vector(r_in.direction()), rec.normal);
-        *scattered = Ray::new(rec.p, reflected + self.roughness*random_in_unit_sphere(), r_in.time());
-        *attenuation = self.albedo;
-        Vec3::dot(&scattered.direction(), &rec.normal) > 0.0
-    }
-    fn clone(&self) -> Box<Material> {
-        Box::new(Metal::new(self.albedo, self.roughness))
+        let scattered = Ray::new(rec.p, reflected + self.roughness*random_in_unit_sphere(), r_in.time());
+        let attenuation = self.albedo;
+        if Vec3::dot(&scattered.direction(), &rec.normal) > 0.0{
+            Some((scattered, attenuation))
+        }else{
+            None
+        }
     }
 }
 
@@ -73,14 +73,15 @@ impl Dielectric{
 }
 
 impl Material for Dielectric {
-    fn scatter(&self, r_in: &Ray, rec: &HitRecord, attenuation: &mut Vec3, scattered: &mut Ray) -> bool {
+    fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Ray, Vec3)>{
         let outward_normal:Vec3;
         let reflected:Vec3 = reflect(r_in.direction(), rec.normal);
         let ni_over_nt:f32;
-        *attenuation = Vec3::new(1.0, 1.0, 1.0);
+        let attenuation = Vec3::new(1.0, 1.0, 1.0);
         let mut refracted:Vec3 = Vec3::new(0.0, 0.0, 0.0);
         let reflect_prob:f32;
         let mut cosine:f32;
+        let mut scattered: Ray;
 
         if Vec3::dot(&r_in.direction(), &rec.normal) > 0.0 {
             outward_normal = -rec.normal;
@@ -102,17 +103,13 @@ impl Material for Dielectric {
 
         }
         if drand48() < reflect_prob {
-            *scattered = Ray::new(rec.p, reflected, r_in.time());
+            scattered = Ray::new(rec.p, reflected, r_in.time());
 
         } else {
-            *scattered = Ray::new(rec.p, refracted, r_in.time());
+            scattered = Ray::new(rec.p, refracted, r_in.time());
 
         }
-        true
-    }
-
-    fn clone(&self) -> Box<Material> {
-        Box::new(Dielectric::new(self.ref_indx))
+        Some((scattered, attenuation))
     }
 }
 

@@ -4,7 +4,7 @@ use super::hitable::HitRecord;
 use super::aabb::AABB;
 
 pub struct HitableList{
-    pub spheres: Vec<Box<dyn Hitable>>
+    pub spheres: Vec<Box<Hitable>>
 }
 
 impl HitableList{
@@ -34,15 +34,23 @@ impl Hitable for HitableList{
         }
         hit_anything
     }
-    fn bounding_box(&self) -> Option<AABB> {
+    fn bounding_box(&self, t0:f32, t1: f32) -> Option<AABB> {
         if self.spheres.len() < 1 {
             return None;
         }
-        let mut first_true = self.spheres[0].bounding_box()?;
-        for i in 1..self.spheres.len() {
-            let tmp_box = self.spheres[i].bounding_box()?;
-            first_true = AABB::surrounding_box(&first_true, &tmp_box);
+
+        if let Some(first) = self.spheres[0].bounding_box(t0, t1){
+            let mut result = first;
+            for sphere in &self.spheres[1..] {
+                if let Some(bbox) = sphere.bounding_box(t0, t1) {
+                    result = result.surrounding_box(&bbox);
+                }else{
+                    return None;
+                }
+            }
+            Some(result)
+        }else{
+            None
         }
-        Some(first_true)
     }
 }
