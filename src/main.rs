@@ -9,9 +9,12 @@ use raytrace::hitable_list::HitableList;
 use raytrace::camera::Camera;
 use raytrace::vec::drand48;
 
+use rand::Rng;
+
 use scenes::{
     checkered_texture::checkered_texture_scene,
     default_scene::default_scene,
+    perlin_spheres::perlin_spheres,
     random_spheres::{
         random_scene, 
         moving_random_scene
@@ -40,9 +43,9 @@ fn color(r: Ray, world: &HitableList, depth: i32) -> Vec3{
 
 
 fn main() {
-    let nx = 200*1;
-    let ny = 100*1;
-    let ns = 10*1;
+    let nx = 200;
+    let ny = 100;
+    let ns = 100;
     print!("P3\n{} {}\n255\n", nx, ny);
 
     let look_from:Vec3 = Vec3::new(13.0, 2.0, 3.0);
@@ -62,7 +65,7 @@ fn main() {
         1.0,
     );
 
-    let world = checkered_texture_scene();
+    let world = perlin_spheres();
     
     for j in (0..ny).rev() {
         for i in 0..nx {

@@ -233,7 +233,7 @@ impl std::ops::DivAssign<f32> for Vec3 {
 }
 
 pub fn drand48()->f32{
-    let random_float: f32 = rand::thread_rng().gen();
+    let random_float: f32 = rand::thread_rng().gen::<f32>();
     random_float
 }
 

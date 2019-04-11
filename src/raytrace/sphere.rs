@@ -35,7 +35,7 @@ impl Hitable for Sphere{
                 let t = temp;
                 let p = r.point_at_parameter(t);
                 let normal = (p - self.center) / self.radius;
-                return Some(HitRecord::new(t, p, normal, self.material.clone()));
+                return Some(HitRecord{t, p, normal, material: Arc::clone(&self.material)});
 
             }
             let temp = (-b + f32::sqrt(discriminant)) / a;
@@ -43,7 +43,7 @@ impl Hitable for Sphere{
                 let t = temp;
                 let p = r.point_at_parameter(t);
                 let normal = (p - self.center) / self.radius;
-                return Some(HitRecord{t, p, normal, material: self.material.clone()});
+                return Some(HitRecord{t, p, normal, material: Arc::clone(&self.material)});
 
             }
         }
