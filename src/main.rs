@@ -11,6 +11,8 @@ use raytrace::vec::drand48;
 
 use rand::Rng;
 
+use rayon::prelude::*;
+
 use scenes::{
     checkered_texture::checkered_texture_scene,
     default_scene::default_scene,
@@ -43,9 +45,9 @@ fn color(r: Ray, world: &HitableList, depth: i32) -> Vec3{
 
 
 fn main() {
-    let nx = 200;
-    let ny = 100;
-    let ns = 100;
+    let nx = 1200;
+    let ny = 800;
+    let ns = 10;
     print!("P3\n{} {}\n255\n", nx, ny);
 
     let look_from:Vec3 = Vec3::new(13.0, 2.0, 3.0);
@@ -65,10 +67,10 @@ fn main() {
         1.0,
     );
 
-    let world = perlin_spheres();
-    
-    for j in (0..ny).rev() {
-        for i in 0..nx {
+    let world = random_scene();
+
+    let rows: Vec<Vec<Vec3>> = (0..ny).into_par_iter().rev().map(|j|{
+        (0..nx).into_par_iter().map(|i|{
             let mut col = Vec3::new(0.0, 0.0, 0.0);
             for _s in 0..ns {
                 let u = (i as f32 + drand48()) / nx as f32;
@@ -78,10 +80,14 @@ fn main() {
             }
             col /= ns as f32;
             col = Vec3::new( f32::sqrt(col[0]), f32::sqrt(col[1]), f32::sqrt(col[2]) );
-            let ir = (255.99 * col[0]) as i32;
-            let ig = (255.99 * col[1]) as i32;
-            let ib = (255.99 * col[2]) as i32;
-            print!("{} {} {}\n", ir, ig, ib);
+            col *= 255.99;
+            col
+        }).collect()
+    }).collect();
+
+    for r in rows{
+        for col in r{
+            print!("{} {} {}\n", col.r() as i32, col.g() as i32, col.b() as i32);
         }
     }
 }

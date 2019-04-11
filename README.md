@@ -9,5 +9,5 @@ Renders according to RTIW's chapter in [RTIW Chapter Renders](RTIWChapterRenders
 
 If you are using VSCode than run `Render` task by pressing `F1 - Tasks: Run Task - Render` else run it with `cargo run --release > output.ppm` command and .ppm image will be generated.
 
-RTIW's Final output(Width = 1200, Height = 800, Sampling = 10)(Took ~3.5 mins to render using above command):
+RTIW's Final output(Width = 1200, Height = 800, Sampling = 10)(Took 1.2 mins to render on my Intel Core i5-7400(4 cores, 4 threads, 3.00Ghz)):
 ![](Final.png)
