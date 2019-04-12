@@ -10,7 +10,7 @@ use crate::raytrace::{
     hitable_list::HitableList,
     vec::Vec3,
     sphere::Sphere,
-    rectangle::Rectangle
+    rectangle::XY
 };
 use std::sync::Arc;
 
@@ -32,7 +32,7 @@ pub fn lightted_perlin_spheres() -> HitableList {
         Arc::new(Diffuse_Light::new(Box::new(ConstantTexture::new(Vec3::new(4.0, 4.0, 4.0)))))))
     );
     world.add(
-        Box::new(Rectangle::new(3.0, 5.0, 1.0, 3.0, -2.0,
+        Box::new(XY::new(3.0, 5.0, 1.0, 3.0, -2.0,
         Arc::new(Diffuse_Light::new(Box::new(ConstantTexture::new(Vec3::new(4.0, 4.0, 4.0)))))))
     );
     world

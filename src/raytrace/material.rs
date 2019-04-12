@@ -8,10 +8,10 @@ use super::texture::Texture;
 use super::hitable::HitRecord;
 
 pub trait Material: Sync + Send{
-    fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Ray, Vec3)>{
+    fn scatter(&self, _r_in: &Ray, _rec: &HitRecord) -> Option<(Ray, Vec3)>{
         None
     }
-    fn emitted(&self, u: f32, v: f32, p: Vec3)-> Vec3{
+    fn emitted(&self, _u: f32, _v: f32, _p: Vec3)-> Vec3{
         Vec3::new(0.0, 0.0, 0.0)
     }
 }
@@ -130,7 +130,7 @@ impl Diffuse_Light{
     }
 }
 impl Material for Diffuse_Light{
-    fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Ray, Vec3)>{
+    fn scatter(&self, _r_in: &Ray, _rec: &HitRecord) -> Option<(Ray, Vec3)>{
         return None;
     }
 

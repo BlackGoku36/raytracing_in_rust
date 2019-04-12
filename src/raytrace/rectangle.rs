@@ -7,7 +7,7 @@ use super::aabb::AABB;
 
 use std::sync::Arc;
 
-pub struct Rectangle{
+pub struct XY{
     x0: f32,
     x1: f32,
     y0: f32,
@@ -16,9 +16,9 @@ pub struct Rectangle{
     material: Arc<Material>
 }
 
-impl Rectangle{
+impl XY{
     pub fn new(x0: f32, x1: f32, y0: f32, y1: f32, k: f32, material: Arc<Material>)-> Self{
-        Rectangle{
+        XY{
             x0, x1,
             y0, y1,
             k,
@@ -27,7 +27,7 @@ impl Rectangle{
     }
 }
 
-impl Hitable for Rectangle{
+impl Hitable for XY{
     fn hit(&self, r: Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
         let t = (self.k-r.origin().z())/r.direction().z();
         if t < t_min || t > t_max{
@@ -45,10 +45,127 @@ impl Hitable for Rectangle{
             material: self.material.clone()
         })
     }
-    fn bounding_box(&self, t0: f32, t1: f32)-> Option<AABB>{
+    fn bounding_box(&self, _t0: f32, _t1: f32)-> Option<AABB>{
         Some(AABB{
             min: Vec3::new(self.x0, self.y0, self.k - 0.0001),
             max: Vec3::new(self.x1, self.y1, self.k + 0.0001)
         })
+    }
+}
+
+
+pub struct XZ{
+    x0: f32,
+    x1: f32,
+    z0: f32,
+    z1: f32,
+    k: f32,
+    material: Arc<Material>
+}
+
+impl XZ{
+    pub fn new(x0: f32, x1: f32, z0: f32, z1: f32, k: f32, material: Arc<Material>)-> Self{
+        XZ{
+            x0, x1,
+            z0, z1,
+            k,
+            material
+        }
+    }
+}
+
+impl Hitable for XZ{
+    fn hit(&self, r: Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
+        let t = (self.k-r.origin().y())/r.direction().y();
+        if t < t_min || t > t_max{
+            return None;
+        }
+        let x = r.origin().x() + t*r.direction().x();
+        let z = r.origin().z() + t*r.direction().z();
+        if x < self.x0 || x > self.x1 || z < self.z0 || z > self.z1{
+            return None;
+        }
+        Some(HitRecord{
+            t,
+            p: r.point_at_parameter(t),
+            normal: Vec3::new(0.0, 1.0, 0.0),
+            material: self.material.clone()
+        })
+    }
+    fn bounding_box(&self, _t0: f32, _t1: f32)-> Option<AABB>{
+        Some(AABB{
+            min: Vec3::new(self.x0, self.k - 0.0001, self.z0),
+            max: Vec3::new(self.x1, self.k + 0.0001, self.z1)
+        })
+    }
+}
+
+pub struct YZ{
+    y0: f32,
+    y1: f32,
+    z0: f32,
+    z1: f32,
+    k: f32,
+    material: Arc<Material>
+}
+
+impl YZ{
+    pub fn new(y0: f32, y1: f32, z0: f32, z1: f32, k: f32, material: Arc<Material>)-> Self{
+        YZ{
+            y0, y1,
+            z0, z1,
+            k,
+            material
+        }
+    }
+}
+
+impl Hitable for YZ{
+    fn hit(&self, r: Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
+        let t = (self.k-r.origin().x())/r.direction().x();
+        if t < t_min || t > t_max{
+            return None;
+        }
+        let y = r.origin().y() + t*r.direction().y();
+        let z = r.origin().z() + t*r.direction().z();
+        if y < self.y0 || y > self.y1 || z < self.z0 || z > self.z1{
+            return None;
+        }
+        Some(HitRecord{
+            t,
+            p: r.point_at_parameter(t),
+            normal: Vec3::new(1.0, 0.0, 0.0),
+            material: self.material.clone()
+        })
+    }
+    fn bounding_box(&self, _t0: f32, _t1: f32)-> Option<AABB>{
+        Some(AABB{
+            min: Vec3::new(self.k - 0.0001, self.y0, self.z0),
+            max: Vec3::new(self.k - 0.0001, self.y1, self.z1)
+        })
+    }
+}
+
+pub struct Flip_Normal{
+    obj: Box<Hitable>
+}
+
+impl Flip_Normal{
+    pub fn new(obj: Box<Hitable>)-> Box<Self>{
+        Box::new(Flip_Normal{obj})
+    }
+}
+impl Hitable for Flip_Normal{
+    fn hit(&self, r: Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
+        match self.obj.hit(r, t_min, t_max){
+            Some(rec) => Some(HitRecord{
+                normal: -rec.normal,
+                ..rec
+            }),
+            None => None
+        }
+    }
+    fn bounding_box(&self, t0: f32, t1: f32)-> Option<AABB>{
+        self.obj.bounding_box(t0, t1)
     }
 }
