@@ -1,5 +1,4 @@
 use super::vec::Vec3;
-use super::vec::drand48;
 use super::perlin::Perlin;
 
 pub trait Texture: Sync + Send{

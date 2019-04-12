@@ -9,7 +9,6 @@ use raytrace::hitable_list::HitableList;
 use raytrace::camera::Camera;
 use raytrace::vec::drand48;
 
-use rand::Rng;
 
 use rayon::prelude::*;
 
@@ -17,6 +16,7 @@ use scenes::{
     checkered_texture::checkered_texture_scene,
     default_scene::default_scene,
     perlin_spheres::perlin_spheres,
+    lighted_perlin_spheres::lightted_perlin_spheres,
     random_spheres::{
         random_scene, 
         moving_random_scene
@@ -29,28 +29,30 @@ fn color(r: Ray, world: &HitableList, depth: i32) -> Vec3{
             if depth >= 50{
                 return Vec3::new(0.0, 0.0, 0.0);
             }
+            let emitted = rec.material.emitted(0.0, 0.0, rec.p);
             if let Some((scattered, attenuation)) = rec.material.scatter(&r, &rec) {
-                attenuation * color(scattered, world, depth+1)
+                emitted + attenuation * color(scattered, world, depth+1)
             }else{
-                Vec3::new(0.0, 0.0, 0.0)
+                emitted
             }
         }
         None => {
-            let unit_direction = Vec3::make_unit_vector(r.direction());
-            let t = 0.5 * (unit_direction.y() + 1.0);
-            return (1.0 - t) * Vec3::new(1.0, 1.0, 1.0) + t * Vec3::new(0.5, 0.7, 1.0);
+            Vec3::new(0.0, 0.0, 0.0)
+            // let unit_direction = Vec3::make_unit_vector(r.direction());
+            // let t = 0.5 * (unit_direction.y() + 1.0);
+            // return (1.0 - t) * Vec3::new(1.0, 1.0, 1.0) + t * Vec3::new(0.5, 0.7, 1.0);
         }
     }
 }
 
 
 fn main() {
-    let nx = 1200;
-    let ny = 800;
-    let ns = 10;
+    let nx = 1200/2;
+    let ny = 800/2;
+    let ns = 50;
     print!("P3\n{} {}\n255\n", nx, ny);
 
-    let look_from:Vec3 = Vec3::new(13.0, 2.0, 3.0);
+    let look_from:Vec3 = Vec3::new(20.0, 20.0, 20.0);
     let look_at:Vec3 = Vec3::new(0.0, 0.0, 0.0);
     let dist_to_focus = 10.0;
     let aperature:f32 = 0.0;
@@ -67,7 +69,7 @@ fn main() {
         1.0,
     );
 
-    let world = random_scene();
+    let world = lightted_perlin_spheres();
 
     let rows: Vec<Vec<Vec3>> = (0..ny).into_par_iter().rev().map(|j|{
         (0..nx).into_par_iter().map(|i|{

@@ -10,3 +10,4 @@ pub mod aabb;
 pub mod bvh;
 pub mod texture;
 pub mod perlin;
+pub mod rectangle;

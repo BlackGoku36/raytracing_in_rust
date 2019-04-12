@@ -8,7 +8,12 @@ use super::texture::Texture;
 use super::hitable::HitRecord;
 
 pub trait Material: Sync + Send{
-    fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Ray, Vec3)>;
+    fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Ray, Vec3)>{
+        None
+    }
+    fn emitted(&self, u: f32, v: f32, p: Vec3)-> Vec3{
+        Vec3::new(0.0, 0.0, 0.0)
+    }
 }
 
 pub struct Lambertian {
@@ -110,6 +115,27 @@ impl Material for Dielectric {
 
         }
         Some((scattered, attenuation))
+    }
+}
+
+pub struct Diffuse_Light{
+    pub emit: Box<Texture>
+}
+
+impl Diffuse_Light{
+    pub fn new(emit: Box<Texture>)-> Self{
+        Diffuse_Light{
+            emit
+        }
+    }
+}
+impl Material for Diffuse_Light{
+    fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Ray, Vec3)>{
+        return None;
+    }
+
+    fn emitted(&self, u: f32, v: f32, p: Vec3)-> Vec3{
+        self.emit.value(u, v, p)
     }
 }
 
