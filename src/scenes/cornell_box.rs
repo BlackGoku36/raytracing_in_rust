@@ -1,22 +1,30 @@
 use crate::raytrace::{
     material::{
         Diffuse_Light,
-        Lambertian
+        Lambertian,
+        Metal,
+        Dielectric
     },
     texture::ConstantTexture,
     hitable_list::HitableList,
+    sphere::Sphere,
     vec::Vec3,
     rectangle::{
         XY,
         XZ,
         YZ,
         Flip_Normal
+    },
+    cube::{
+        Cube,
+        Translate,
+        Rotate_Y
     }
 };
 use std::sync::Arc;
 
 pub fn cornell_box() -> HitableList {
-    let mut world = HitableList::new(4);
+    let mut world = HitableList::new(8);
     let red = Arc::new(Lambertian::new(Box::new(ConstantTexture::new(Vec3::new(0.65, 0.05, 0.05)))));
     let green = Arc::new(Lambertian::new(Box::new(ConstantTexture::new(Vec3::new(0.12, 0.45, 0.15)))));
     let white = Arc::new(Lambertian::new(Box::new(ConstantTexture::new(Vec3::new(0.73, 0.73, 0.73)))));
@@ -44,6 +52,36 @@ pub fn cornell_box() -> HitableList {
     world.add(
        Flip_Normal::new(Box::new(XY::new(0.0, 555.0, 0.0, 555.0, 555.0,
         Arc::new(Lambertian::new(Box::new(ConstantTexture::new(Vec3::new(0.73, 0.73, 0.73))))))))
+    );
+    world.add(
+        Translate::new(
+            Rotate_Y::new(
+                Box::new(
+                    Cube::new(
+                        Vec3::new(0.0, 0.0, 0.0), 
+                        Vec3::new(165.0, 165.0, 165.0), 
+                        Arc::new(Lambertian::new(Box::new(ConstantTexture::new(Vec3::new(0.73, 0.73, 0.73)))))
+                    )
+                ),
+                -18.0
+            ),
+            Vec3::new(130.0, 0.0, 65.0)
+        )
+    );
+    world.add(
+        Translate::new(
+            Rotate_Y::new(
+                Box::new(
+                    Cube::new(
+                        Vec3::new(0.0, 0.0, 0.0), 
+                        Vec3::new(165.0, 330.0, 165.0), 
+                        Arc::new(Lambertian::new(Box::new(ConstantTexture::new(Vec3::new(0.73, 0.73, 0.73)))))
+                    )
+                ),
+                15.0
+            ),
+            Vec3::new(265.0, 0.0, 295.0)
+        )
     );
     world
 }

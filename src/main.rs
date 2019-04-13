@@ -52,9 +52,7 @@ fn main() {
     let ny = 400;
     let ns = 100;
     print!("P3\n{} {}\n255\n", nx, ny);
-    //let look_from:Vec3 = Vec3::new(25.0, 3.0, 5.0); for lighted perlin sphere scene
-    //let look_at:Vec3 = Vec3::new(0.0, 2.0, 0.0); for lighted perlin sphere scene
-    let look_from:Vec3 = Vec3::new(278.0, 278.0, -800.0);
+    let look_from:Vec3 = Vec3::new(278.0, 278.0, -761.0);
     let look_at:Vec3 = Vec3::new(278.0, 278.0, 0.0);
     let dist_to_focus = 10.0;
     let aperature:f32 = 0.0;

@@ -11,3 +11,4 @@ pub mod bvh;
 pub mod texture;
 pub mod perlin;
 pub mod rectangle;
+pub mod cube;
