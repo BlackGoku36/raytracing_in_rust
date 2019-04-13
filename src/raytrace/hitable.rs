@@ -10,15 +10,6 @@ pub struct HitRecord{
     pub normal: Vec3,
     pub material: Arc<Material>
 }
-impl HitRecord{
-    pub fn new(t: f32, p: Vec3, normal: Vec3, material: Arc<Material>)-> Self{
-        HitRecord{
-            t, p,
-            normal,
-            material: material.clone()
-        }
-    }
-}
 
 pub trait Hitable: Sync + Send{
     fn hit(&self, r: Ray, t_min:f32, t_max:f32) -> Option<HitRecord>;

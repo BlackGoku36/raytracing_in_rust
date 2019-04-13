@@ -12,3 +12,4 @@ pub mod texture;
 pub mod perlin;
 pub mod rectangle;
 pub mod cube;
+pub mod constant_medium;

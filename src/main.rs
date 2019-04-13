@@ -21,7 +21,9 @@ use scenes::{
         random_scene, 
         moving_random_scene
     },
-    cornell_box::cornell_box
+    cornell_box::{
+        cornell_box, cornell_smoke
+    }
 };
 
 fn color(r: Ray, world: &HitableList, depth: i32) -> Vec3{
@@ -69,7 +71,7 @@ fn main() {
         1.0,
     );
 
-    let world = cornell_box();
+    let world = cornell_smoke();
 
     let rows: Vec<Vec<Vec3>> = (0..ny).into_par_iter().rev().map(|j|{
         (0..nx).into_par_iter().map(|i|{

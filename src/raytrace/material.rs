@@ -4,6 +4,7 @@ use super::vec::random_in_unit_sphere;
 use super::ray::Ray;
 use super::texture::Texture;
 
+use std::sync::Arc;
 
 use super::hitable::HitRecord;
 
@@ -136,6 +137,26 @@ impl Material for Diffuse_Light{
 
     fn emitted(&self, u: f32, v: f32, p: Vec3)-> Vec3{
         self.emit.value(u, v, p)
+    }
+}
+
+pub struct Isotropic{
+    pub texture: Box<Texture>,
+}
+
+impl Isotropic{
+    pub fn new(texture: Box<Texture>)-> Arc<Self>{
+        Arc::new(Isotropic{
+            texture
+        })
+    }
+}
+
+impl Material for Isotropic{
+    fn scatter(&self, r_in: &Ray, rec: &HitRecord)-> Option<(Ray, Vec3)>{
+        let scattered = Ray::new(rec.p, random_in_unit_sphere(), r_in.time());
+        let attenuation = self.texture.value(0.0, 0.0, rec.p);
+        Some((scattered, attenuation))
     }
 }
 
