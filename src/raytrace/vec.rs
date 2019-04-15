@@ -2,58 +2,58 @@ extern crate rand;
 use rand::Rng;
 
 #[derive(Copy, Clone, Debug)]
-pub struct Vec3{
+pub struct Vec3 {
     e: [f32; 3],
 }
 
-impl Vec3{
-    pub fn new(e0:f32, e1:f32, e2: f32) -> Vec3{
-        Vec3{ e: [e0, e1, e2] }
+impl Vec3 {
+    pub fn new(e0: f32, e1: f32, e2: f32) -> Vec3 {
+        Vec3 { e: [e0, e1, e2] }
     }
-    pub fn x(&self) -> f32{ self.e[0] }
-    pub fn y(&self) -> f32{ self.e[1] }
-    pub fn z(&self) -> f32{ self.e[2] }
-    pub fn r(&self) -> f32{ self.e[0] }
-    pub fn g(&self) -> f32{ self.e[1] }
-    pub fn b(&self) -> f32{ self.e[2] }
-
-    pub fn length(&self) -> f32{
-        f32::sqrt(
-            self.e[0] * self.e[0] +
-            self.e[1] * self.e[1] +
-            self.e[2] * self.e[2]
-        )
+    pub fn x(&self) -> f32 {
+        self.e[0]
     }
-
-    pub fn squared_length(&self)->f32{
-        self.e[0] * self.e[0] +
-        self.e[1] * self.e[1] +
-        self.e[2] * self.e[2]
+    pub fn y(&self) -> f32 {
+        self.e[1]
+    }
+    pub fn z(&self) -> f32 {
+        self.e[2]
+    }
+    pub fn r(&self) -> f32 {
+        self.e[0]
+    }
+    pub fn g(&self) -> f32 {
+        self.e[1]
+    }
+    pub fn b(&self) -> f32 {
+        self.e[2]
     }
 
-    pub fn make_unit_vector(v : Vec3)->Vec3{
+    pub fn length(&self) -> f32 {
+        f32::sqrt(self.e[0] * self.e[0] + self.e[1] * self.e[1] + self.e[2] * self.e[2])
+    }
+
+    pub fn squared_length(&self) -> f32 {
+        self.e[0] * self.e[0] + self.e[1] * self.e[1] + self.e[2] * self.e[2]
+    }
+
+    pub fn make_unit_vector(v: Vec3) -> Vec3 {
         v / v.length()
     }
 
-    pub fn cross(v1 : Vec3, v2 : Vec3) -> Vec3 {
+    pub fn cross(v1: Vec3, v2: Vec3) -> Vec3 {
         Vec3::new(
             v1.e[1] * v2.e[2] - v1.e[2] * v2.e[1],
             -(v1.e[0] * v2.e[2] - v1.e[2] * v2.e[0]),
-            v1.e[0] * v2.e[1] - v1.e[1] * v2.e[0]
+            v1.e[0] * v2.e[1] - v1.e[1] * v2.e[0],
         )
     }
 
-    pub fn dot(v1 : &Vec3, v2 : &Vec3)->f32{
-        v1.e[0] * v2.e[0] +
-        v1.e[1] * v2.e[1] +
-        v1.e[2] * v2.e[2]
+    pub fn dot(v1: &Vec3, v2: &Vec3) -> f32 {
+        v1.e[0] * v2.e[0] + v1.e[1] * v2.e[1] + v1.e[2] * v2.e[2]
     }
-    pub fn inverse(&self)->Vec3{
-        Vec3::new(
-            1.0 / self.x(), 
-            1.0 / self.y(), 
-            1.0 / self.z()
-        )
+    pub fn inverse(&self) -> Vec3 {
+        Vec3::new(1.0 / self.x(), 1.0 / self.y(), 1.0 / self.z())
     }
 }
 
@@ -71,26 +71,22 @@ impl std::ops::IndexMut<usize> for Vec3 {
     }
 }
 
-impl std::ops::Neg for Vec3{
+impl std::ops::Neg for Vec3 {
     type Output = Vec3;
 
-    fn neg(self) -> Vec3{
-        Vec3::new(
-            -self.e[0],
-            -self.e[1],
-            -self.e[2]
-        )
+    fn neg(self) -> Vec3 {
+        Vec3::new(-self.e[0], -self.e[1], -self.e[2])
     }
 }
 
-impl std::ops::Add<Vec3> for Vec3{
+impl std::ops::Add<Vec3> for Vec3 {
     type Output = Vec3;
 
-    fn add(self, rhs:Vec3) -> Vec3{
+    fn add(self, rhs: Vec3) -> Vec3 {
         Vec3::new(
             self.e[0] + rhs.e[0],
             self.e[1] + rhs.e[1],
-            self.e[2] + rhs.e[2]
+            self.e[2] + rhs.e[2],
         )
     }
 }
@@ -102,7 +98,7 @@ impl std::ops::Sub<Vec3> for Vec3 {
         Vec3::new(
             self.e[0] - rhs.e[0],
             self.e[1] - rhs.e[1],
-            self.e[2] - rhs.e[2]
+            self.e[2] - rhs.e[2],
         )
     }
 }
@@ -114,7 +110,7 @@ impl std::ops::Mul<Vec3> for Vec3 {
         Vec3::new(
             self.e[0] * rhs.e[0],
             self.e[1] * rhs.e[1],
-            self.e[2] * rhs.e[2]
+            self.e[2] * rhs.e[2],
         )
     }
 }
@@ -123,11 +119,7 @@ impl std::ops::Mul<f32> for Vec3 {
     type Output = Vec3;
 
     fn mul(self, rhs: f32) -> Vec3 {
-        Vec3::new(
-            self.e[0] * rhs,
-            self.e[1] * rhs,
-            self.e[2] * rhs
-        )
+        Vec3::new(self.e[0] * rhs, self.e[1] * rhs, self.e[2] * rhs)
     }
 }
 
@@ -135,11 +127,7 @@ impl std::ops::Mul<Vec3> for f32 {
     type Output = Vec3;
 
     fn mul(self, rhs: Vec3) -> Vec3 {
-        Vec3::new(
-            self * rhs.e[0],
-            self * rhs.e[1],
-            self * rhs.e[2]
-        )
+        Vec3::new(self * rhs.e[0], self * rhs.e[1], self * rhs.e[2])
     }
 }
 
@@ -150,7 +138,7 @@ impl std::ops::Div<Vec3> for Vec3 {
         Vec3::new(
             self.e[0] / rhs.e[0],
             self.e[1] / rhs.e[1],
-            self.e[2] / rhs.e[2]
+            self.e[2] / rhs.e[2],
         )
     }
 }
@@ -159,14 +147,9 @@ impl std::ops::Div<f32> for Vec3 {
     type Output = Vec3;
 
     fn div(self, rhs: f32) -> Vec3 {
-        Vec3::new(
-            self.e[0] / rhs,
-            self.e[1] / rhs,
-            self.e[2] / rhs
-        )
+        Vec3::new(self.e[0] / rhs, self.e[1] / rhs, self.e[2] / rhs)
     }
 }
-
 
 impl std::ops::AddAssign<Vec3> for Vec3 {
     fn add_assign(&mut self, other: Vec3) {
@@ -232,16 +215,16 @@ impl std::ops::DivAssign<f32> for Vec3 {
     }
 }
 
-pub fn drand48()->f32{
+pub fn drand48() -> f32 {
     let random_float: f32 = rand::thread_rng().gen::<f32>();
     random_float
 }
 
-pub fn random_in_unit_sphere()-> Vec3{
-    let mut p:Vec3;
-    while{
+pub fn random_in_unit_sphere() -> Vec3 {
+    let mut p: Vec3;
+    while {
         p = 2.0 * Vec3::new(drand48(), drand48(), drand48()) - Vec3::new(1.0, 1.0, 1.0);
         p.squared_length() >= 1.0
-    }{}
+    } {}
     return p;
 }

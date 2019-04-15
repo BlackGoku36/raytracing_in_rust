@@ -4,13 +4,13 @@ use super::vec::Vec3;
 pub struct Ray {
     pub origin: Vec3,
     pub direction: Vec3,
-    pub time: f32
+    pub time: f32,
 }
 
-impl Ray{
-    pub fn new(origin: Vec3, direction:Vec3, ti: f32) -> Self {
-        Ray{
-            origin, 
+impl Ray {
+    pub fn new(origin: Vec3, direction: Vec3, ti: f32) -> Self {
+        Ray {
+            origin,
             direction,
             time: ti,
         }

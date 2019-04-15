@@ -1,55 +1,63 @@
-use super::vec::Vec3;
-use super::ray::Ray;
-use super::hitable::Hitable;
-use super::hitable::HitRecord;
-use super::material::Material;
 use super::aabb::AABB;
+use super::hitable::HitRecord;
+use super::hitable::Hitable;
+use super::material::Material;
+use super::ray::Ray;
+use super::vec::Vec3;
 use std::sync::Arc;
 
-pub struct Sphere{
+pub struct Sphere {
     pub center: Vec3,
     pub radius: f32,
-    pub material: Arc<Material>
+    pub material: Arc<Material>,
 }
 
-impl Sphere{
+impl Sphere {
     pub fn new(center: Vec3, radius: f32, material: Arc<Material>) -> Self {
-        Sphere{
-            center, 
-            radius, 
-            material
+        Sphere {
+            center,
+            radius,
+            material,
         }
     }
 }
 
-impl Hitable for Sphere{
+impl Hitable for Sphere {
     fn hit(&self, r: Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
-        let oc:Vec3 = r.origin() - self.center;
+        let oc: Vec3 = r.origin() - self.center;
         let a = Vec3::dot(&r.direction(), &r.direction());
         let b = Vec3::dot(&oc, &r.direction());
-        let c = Vec3::dot(&oc, &oc) - self.radius*self.radius;
-        let discriminant = b*b - a*c;
+        let c = Vec3::dot(&oc, &oc) - self.radius * self.radius;
+        let discriminant = b * b - a * c;
         if discriminant > 0.0 {
             let temp = (-b - f32::sqrt(discriminant)) / a;
-            if temp < t_max && temp > t_min{
+            if temp < t_max && temp > t_min {
                 let t = temp;
                 let p = r.point_at_parameter(t);
                 let normal = (p - self.center) / self.radius;
-                return Some(HitRecord{t, p, normal, material: Arc::clone(&self.material)});
-
+                return Some(HitRecord {
+                    t,
+                    p,
+                    normal,
+                    material: Arc::clone(&self.material),
+                });
             }
             let temp = (-b + f32::sqrt(discriminant)) / a;
-            if temp < t_max && temp > t_min{
+            if temp < t_max && temp > t_min {
                 let t = temp;
                 let p = r.point_at_parameter(t);
                 let normal = (p - self.center) / self.radius;
-                return Some(HitRecord{t, p, normal, material: Arc::clone(&self.material)});
-
+                return Some(HitRecord {
+                    t,
+                    p,
+                    normal,
+                    material: Arc::clone(&self.material),
+                });
             }
         }
         None
     }
-    fn bounding_box(&self, _t0: f32, _t1: f32)->Option<AABB>{
+    fn bounding_box(&self, _t0: f32, _t1: f32) -> Option<AABB> {
         Some(AABB {
             min: self.center - Vec3::new(self.radius, self.radius, self.radius),
             max: self.center + Vec3::new(self.radius, self.radius, self.radius),
