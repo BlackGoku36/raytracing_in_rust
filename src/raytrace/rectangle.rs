@@ -42,6 +42,8 @@ impl Hitable for XY {
         }
         Some(HitRecord {
             t,
+            u: (x-self.x0)/(self.x1-self.x0),
+            v: (y-self.y0)/(self.y1-self.y0),
             p: r.point_at_parameter(t),
             normal: Vec3::new(0.0, 0.0, 1.0),
             material: self.material.clone(),
@@ -90,6 +92,8 @@ impl Hitable for XZ {
         }
         Some(HitRecord {
             t,
+            u: (x-self.x0)/(self.x1-self.x0),
+            v: (z-self.z0)/(self.z1-self.z0),
             p: r.point_at_parameter(t),
             normal: Vec3::new(0.0, 1.0, 0.0),
             material: self.material.clone(),
@@ -138,6 +142,8 @@ impl Hitable for YZ {
         }
         Some(HitRecord {
             t,
+            u: (y-self.y0)/(self.y1-self.y0),
+            v: (z-self.z0)/(self.z1-self.z0),
             p: r.point_at_parameter(t),
             normal: Vec3::new(1.0, 0.0, 0.0),
             material: self.material.clone(),

@@ -24,6 +24,7 @@ use scenes::{
     // checkered_texture::checkered_texture_scene,
     // default_scene::default_scene,
     perlin_spheres::perlin_spheres,
+    textured_sphere::textured_spheres,
 };
 
 fn color(r: Ray, world: &HitableList, depth: i32) -> Vec3 {
@@ -34,7 +35,7 @@ fn color(r: Ray, world: &HitableList, depth: i32) -> Vec3 {
             }
             let emitted = rec.material.emitted(0.0, 0.0, rec.p);
             if let Some((scattered, attenuation)) = rec.material.scatter(&r, &rec) {
-                emitted + attenuation * color(scattered, world, depth + 1)
+                emitted + attenuation //* color(scattered, world, depth + 1)
             } else {
                 emitted
             }
@@ -49,12 +50,12 @@ fn color(r: Ray, world: &HitableList, depth: i32) -> Vec3 {
 }
 
 fn main() {
-    let nx = 400;
-    let ny = 400;
-    let ns = 10000;
+    let nx = 800;
+    let ny = 800;
+    let ns = 100;
     print!("P3\n{} {}\n255\n", nx, ny);
-    let look_from: Vec3 = Vec3::new(478.0, 278.0, -600.0);
-    let look_at: Vec3 = Vec3::new(278.0, 278.0, 0.0);
+    let look_from: Vec3 = Vec3::new(10.0, 0.0, 0.0);
+    let look_at: Vec3 = Vec3::new(0.0, 2.0, 0.0);
     let dist_to_focus = 10.0;
     let aperature: f32 = 0.0;
 
@@ -70,7 +71,7 @@ fn main() {
         1.0,
     );
 
-    let world = final_scene();
+    let world = textured_spheres();
 
     let rows: Vec<Vec<Vec3>> = (0..ny)
         .into_par_iter()

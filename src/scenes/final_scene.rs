@@ -8,10 +8,12 @@ use crate::raytrace::{
     moving_sphere::Movingsphere,
     rectangle::XZ,
     sphere::Sphere,
-    texture::{ConstantTexture, NoiseTexture},
+    texture::{ConstantTexture, NoiseTexture, ImageTexture},
     vec::{drand48, Vec3},
 };
 use std::sync::Arc;
+use image;
+
 pub fn final_scene() -> HitableList {
     let mut world = HitableList::new(30);
     let mut boxlist: Vec<Box<Hitable>> = vec![];
@@ -20,6 +22,11 @@ pub fn final_scene() -> HitableList {
     let center = Vec3::new(400.0, 400.0, 200.0);
 
     let nb = 20;
+
+    let image = image::open("earth.png").expect("Can't find image").to_rgb();
+    let (nx, ny) = image.dimensions();
+    let pixels = image.into_raw();
+    let texture = ImageTexture::new(pixels, nx, ny);
 
     for i in 0..nb {
         for j in 0..nb {
@@ -96,6 +103,11 @@ pub fn final_scene() -> HitableList {
         0.0001,
         Box::new(ConstantTexture::new(Vec3::new(1.0, 1.0, 1.0))),
     ));
+    world.add(Box::new(Sphere::new(
+        Vec3::new(400.0, 200.0, 400.0),
+        100.0,
+        Arc::new(Lambertian::new(Box::new(texture))),
+    )));
     world.add(Box::new(Sphere::new(
         Vec3::new(220.0, 280.0, 300.0),
         80.0,

@@ -52,6 +52,8 @@ impl Hitable for ConstantMedium {
                         let normal = Vec3::new(1.0, 0.0, 0.0);
                         Some(HitRecord {
                             t,
+                            u: 0.0,
+                            v: 0.0,
                             p,
                             normal,
                             material: self.phase_function.clone(),

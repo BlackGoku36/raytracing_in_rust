@@ -31,7 +31,7 @@ impl Material for Lambertian {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Ray, Vec3)> {
         let target: Vec3 = rec.p + rec.normal + random_in_unit_sphere();
         let scattered = Ray::new(rec.p, target - rec.p, r_in.time());
-        let attenuation = self.albedo.value(0.0, 0.0, rec.p);
+        let attenuation = self.albedo.value(rec.u, rec.v, rec.p);
         Some((scattered, attenuation))
     }
 }
@@ -144,7 +144,7 @@ impl Isotropic {
 impl Material for Isotropic {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Ray, Vec3)> {
         let scattered = Ray::new(rec.p, random_in_unit_sphere(), r_in.time());
-        let attenuation = self.texture.value(0.0, 0.0, rec.p);
+        let attenuation = self.texture.value(rec.u, rec.v, rec.p);
         Some((scattered, attenuation))
     }
 }

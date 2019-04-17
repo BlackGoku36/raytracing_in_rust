@@ -6,6 +6,8 @@ use super::ray::Ray;
 use super::vec::Vec3;
 use std::sync::Arc;
 
+use std::f32::consts::PI;
+
 pub struct Movingsphere {
     pub center0: Vec3,
     pub center1: Vec3,
@@ -50,8 +52,11 @@ impl Hitable for Movingsphere {
                 let t = temp;
                 let p = r.point_at_parameter(t);
                 let normal = (p - self.center(r.time())) / self.radius;
+                let (u, v) = get_sphere_uv(normal);
                 return Some(HitRecord {
                     t,
+                    u,
+                    v,
                     p,
                     normal,
                     material: self.material.clone(),
@@ -62,8 +67,11 @@ impl Hitable for Movingsphere {
                 let t = temp;
                 let p = r.point_at_parameter(t);
                 let normal = (p - self.center(r.time())) / self.radius;
+                let (u, v) = get_sphere_uv(normal);
                 return Some(HitRecord {
                     t,
+                    u,
+                    v,
                     p,
                     normal,
                     material: self.material.clone(),
@@ -87,4 +95,12 @@ impl Hitable for Movingsphere {
             max: sbox.max,
         })
     }
+}
+
+fn get_sphere_uv(p: Vec3) -> (f32, f32){
+    let phi = p.z().atan2(p.x());
+    let theta = p.y().asin();
+    let u = 1.0 - (phi + PI) / (2.0 * PI);
+    let v = (theta + PI/2.0) / PI;
+    (u, v)
 }

@@ -5,3 +5,4 @@ pub mod final_scene;
 pub mod lighted_perlin_spheres;
 pub mod perlin_spheres;
 pub mod random_spheres;
+pub mod textured_sphere;
