@@ -21,7 +21,7 @@ pub fn final_scene() -> HitableList {
 
     let center = Vec3::new(400.0, 400.0, 200.0);
 
-    let nb = 20;
+    let nb = 18;
 
     let image = image::open("earth.png").expect("Can't find image").to_rgb();
     let (nx, ny) = image.dimensions();
@@ -113,7 +113,7 @@ pub fn final_scene() -> HitableList {
         80.0,
         Arc::new(Lambertian::new(Box::new(NoiseTexture::new(0.1)))),
     )));
-    let ns = 1000;
+    let ns = 750;
     for _j in 0..ns {
         boxlist2.push(Box::new(Sphere::new(
             Vec3::new(165.0 * drand48(), 165.0 * drand48(), 165.0 * drand48()),
