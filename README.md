@@ -12,5 +12,5 @@ If you are using VSCode than run `Render` task by pressing `F1 - Tasks: Run Task
 RTIW's Final output(Width = 1200, Height = 800, Sampling = 10):
 ![](Final.png)
 
-RTTNW's Final output(Width = 1200, Height = 800, Sampling = 10):
+RTTNW's Final output(Width = 800, Height = 800, Sampling = 10,000):
 ![](Final2.png)
