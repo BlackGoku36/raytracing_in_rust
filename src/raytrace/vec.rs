@@ -1,6 +1,8 @@
 extern crate rand;
 use rand::Rng;
 
+use std::f32::consts::PI;
+
 #[derive(Copy, Clone, Debug)]
 pub struct Vec3 {
     e: [f32; 3],
@@ -37,7 +39,7 @@ impl Vec3 {
         self.e[0] * self.e[0] + self.e[1] * self.e[1] + self.e[2] * self.e[2]
     }
 
-    pub fn make_unit_vector(v: Vec3) -> Vec3 {
+    pub fn unit_vector(v: Vec3) -> Vec3 {
         v / v.length()
     }
 
@@ -52,6 +54,7 @@ impl Vec3 {
     pub fn dot(v1: &Vec3, v2: &Vec3) -> f32 {
         v1.e[0] * v2.e[0] + v1.e[1] * v2.e[1] + v1.e[2] * v2.e[2]
     }
+
     pub fn inverse(&self) -> Vec3 {
         Vec3::new(1.0 / self.x(), 1.0 / self.y(), 1.0 / self.z())
     }
@@ -227,4 +230,12 @@ pub fn random_in_unit_sphere() -> Vec3 {
         p.squared_length() >= 1.0
     } {}
     return p;
+}
+
+pub fn get_sphere_uv(p: Vec3) -> (f32, f32) {
+    let phi = p.z().atan2(p.x());
+    let theta = p.y().asin();
+    let u = 1.0 - (phi + PI) / (2.0 * PI);
+    let v = (theta + PI / 2.0) / PI;
+    (u, v)
 }

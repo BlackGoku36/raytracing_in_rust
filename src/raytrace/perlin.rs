@@ -1,5 +1,4 @@
-use super::vec::drand48;
-use super::vec::Vec3;
+use super::vec::{drand48, Vec3};
 
 pub struct Perlin {
     pub perm_x: Vec<usize>,
@@ -54,7 +53,7 @@ impl Perlin {
     pub fn perlin_generate() -> Vec<Vec3> {
         let mut p: Vec<Vec3> = Vec::with_capacity(256);
         for _i in 0..256 {
-            p.push(Vec3::make_unit_vector(Vec3::new(
+            p.push(Vec3::unit_vector(Vec3::new(
                 -1.0 + 2.0 * drand48(),
                 -1.0 + 2.0 * drand48(),
                 -1.0 + 2.0 * drand48(),

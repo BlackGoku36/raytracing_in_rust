@@ -1,7 +1,6 @@
 use super::ray::Ray;
-use super::vec::drand48;
-use super::vec::random_in_unit_sphere;
-use super::vec::Vec3;
+use super::vec::{drand48, random_in_unit_sphere, Vec3};
+
 use std::f32::consts::PI;
 
 pub struct Camera {
@@ -35,8 +34,8 @@ impl Camera {
         let half_height = f32::tan(theta / 2.0);
         let half_width = aspect * half_height;
         let origin = look_from;
-        let w = Vec3::make_unit_vector(look_from - look_at);
-        let u = Vec3::make_unit_vector(Vec3::cross(vup, w));
+        let w = Vec3::unit_vector(look_from - look_at);
+        let u = Vec3::unit_vector(Vec3::cross(vup, w));
         let v = Vec3::cross(w, u);
         let mut lower_left_corner = Vec3::new(-half_width, -half_height, -1.0);
         lower_left_corner =

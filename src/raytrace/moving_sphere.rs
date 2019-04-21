@@ -1,12 +1,10 @@
 use super::aabb::AABB;
-use super::hitable::HitRecord;
-use super::hitable::Hitable;
+use super::hitable::{HitRecord, Hitable};
 use super::material::Material;
 use super::ray::Ray;
-use super::vec::Vec3;
-use std::sync::Arc;
+use super::vec::{get_sphere_uv, Vec3};
 
-use std::f32::consts::PI;
+use std::sync::Arc;
 
 pub struct Movingsphere {
     pub center0: Vec3,
@@ -95,12 +93,4 @@ impl Hitable for Movingsphere {
             max: sbox.max,
         })
     }
-}
-
-fn get_sphere_uv(p: Vec3) -> (f32, f32){
-    let phi = p.z().atan2(p.x());
-    let theta = p.y().asin();
-    let u = 1.0 - (phi + PI) / (2.0 * PI);
-    let v = (theta + PI/2.0) / PI;
-    (u, v)
 }

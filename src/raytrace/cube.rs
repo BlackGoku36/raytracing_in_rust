@@ -1,6 +1,5 @@
 use super::aabb::AABB;
-use super::hitable::HitRecord;
-use super::hitable::Hitable;
+use super::hitable::{HitRecord, Hitable};
 use super::hitable_list::HitableList;
 use super::material::Material;
 use super::ray::Ray;
@@ -9,9 +8,7 @@ use super::vec::Vec3;
 
 use std::sync::Arc;
 
-use std::f32::consts::PI;
-use std::f32::MAX;
-use std::f32::MIN;
+use std::f32::{consts::PI, MAX, MIN};
 
 pub struct Cube {
     p0: Vec3,

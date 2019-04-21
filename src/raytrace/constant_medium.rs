@@ -1,14 +1,11 @@
 use super::aabb::AABB;
-use super::hitable::HitRecord;
-use super::hitable::Hitable;
-use super::material::Isotropic;
-use super::material::Material;
+use super::hitable::{HitRecord, Hitable};
+use super::material::{Isotropic, Material};
 use super::ray::Ray;
 use super::texture::Texture;
-use super::vec::drand48;
-use super::vec::Vec3;
-use std::f32::{MAX, MIN};
+use super::vec::{drand48, Vec3};
 
+use std::f32::{MAX, MIN};
 use std::sync::Arc;
 
 pub struct ConstantMedium {

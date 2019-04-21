@@ -17,9 +17,7 @@ use scenes::{
     //     random_scene,
     //     moving_random_scene
     // },
-    // cornell_box::{
-    //     cornell_box, cornell_smoke
-    // },
+    cornell_box::{cornell_box, cornell_smoke},
     final_scene::final_scene,
     // checkered_texture::checkered_texture_scene,
     // default_scene::default_scene,
@@ -33,7 +31,7 @@ fn color(r: Ray, world: &HitableList, depth: i32) -> Vec3 {
             if depth >= 50 {
                 return Vec3::new(0.0, 0.0, 0.0);
             }
-            let emitted = rec.material.emitted(0.0, 0.0, rec.p);
+            let emitted = rec.material.emitted(rec.u, rec.v, rec.p);
             if let Some((scattered, attenuation)) = rec.material.scatter(&r, &rec) {
                 emitted + attenuation * color(scattered, world, depth + 1)
             } else {
@@ -50,9 +48,9 @@ fn color(r: Ray, world: &HitableList, depth: i32) -> Vec3 {
 }
 
 fn main() {
-    let nx = 600;
-    let ny = 600;
-    let ns = 10000;
+    let nx = 300;
+    let ny = 300;
+    let ns = 100;
     print!("P3\n{} {}\n255\n", nx, ny);
     let look_from: Vec3 = Vec3::new(478.0, 278.0, -600.0);
     let look_at: Vec3 = Vec3::new(278.0, 278.0, 0.0);

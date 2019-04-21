@@ -1,6 +1,5 @@
 use super::aabb::AABB;
-use super::hitable::HitRecord;
-use super::hitable::Hitable;
+use super::hitable::{HitRecord, Hitable};
 use super::ray::Ray;
 
 use rand::Rng;

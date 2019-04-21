@@ -1,11 +1,10 @@
 use crate::raytrace::{
-    hitable_list::HitableList, material::Lambertian, sphere::Sphere, texture::NoiseTexture,
-    vec::Vec3,
-    texture::ImageTexture,
+    hitable_list::HitableList, material::Lambertian, sphere::Sphere, texture::ImageTexture,
+    texture::NoiseTexture, vec::Vec3,
 };
 
-use std::sync::Arc;
 use image;
+use std::sync::Arc;
 
 pub fn textured_spheres() -> HitableList {
     let mut world = HitableList::new(2);

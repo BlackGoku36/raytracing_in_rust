@@ -1,12 +1,9 @@
+use super::hitable::HitRecord;
 use super::ray::Ray;
 use super::texture::Texture;
-use super::vec::drand48;
-use super::vec::random_in_unit_sphere;
-use super::vec::Vec3;
+use super::vec::{drand48, random_in_unit_sphere, Vec3};
 
 use std::sync::Arc;
-
-use super::hitable::HitRecord;
 
 pub trait Material: Sync + Send {
     fn scatter(&self, _r_in: &Ray, _rec: &HitRecord) -> Option<(Ray, Vec3)> {
@@ -52,7 +49,7 @@ impl Metal {
 
 impl Material for Metal {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Ray, Vec3)> {
-        let reflected: Vec3 = reflect(Vec3::make_unit_vector(r_in.direction()), rec.normal);
+        let reflected: Vec3 = reflect(Vec3::unit_vector(r_in.direction()), rec.normal);
         let scattered = Ray::new(
             rec.p,
             reflected + self.roughness * random_in_unit_sphere(),
@@ -160,7 +157,7 @@ pub fn reflect(v: Vec3, n: Vec3) -> Vec3 {
 }
 
 pub fn refract(v: Vec3, n: Vec3, ni_over_nt: f32, refracted: &mut Vec3) -> bool {
-    let uv: Vec3 = Vec3::make_unit_vector(v);
+    let uv: Vec3 = Vec3::unit_vector(v);
     let dt: f32 = Vec3::dot(&uv, &n);
     let discriminant = 1.0 - ni_over_nt * ni_over_nt * (1.0 - dt * dt);
     if discriminant > 0.0 {

@@ -2,6 +2,7 @@ use super::aabb::AABB;
 use super::material::Material;
 use super::ray::Ray;
 use super::vec::Vec3;
+
 use std::sync::Arc;
 
 pub struct HitRecord {

@@ -8,11 +8,11 @@ use crate::raytrace::{
     moving_sphere::Movingsphere,
     rectangle::XZ,
     sphere::Sphere,
-    texture::{ConstantTexture, NoiseTexture, ImageTexture},
+    texture::{ConstantTexture, ImageTexture, NoiseTexture},
     vec::{drand48, Vec3},
 };
-use std::sync::Arc;
 use image;
+use std::sync::Arc;
 
 pub fn final_scene() -> HitableList {
     let mut world = HitableList::new(30);
