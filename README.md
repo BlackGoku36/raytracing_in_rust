@@ -2,6 +2,8 @@
 
 Implementation of Raytracing in Rust from Peter Shirley's RTIW and RTTNW
 
+We will add some more thing such as object, hdr, etc in [RRayTracer](https://github.com/BlackGoku36/RRayTracer) because those are not covered by Peter Shirley's minibooks.
+
 Commits are done chapter by chapter
 `Note: RTIW'sChapter 10 isn't missing, it was typo in commit message Chapter 11 is Chapter 10, Chapter 11 is Chapter 12`
 
